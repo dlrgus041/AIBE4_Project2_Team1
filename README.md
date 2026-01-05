@@ -1,3 +1,22 @@
+## 파일 구조
+```text
+kr.java.pr1mary
+├── controller
+│   ├── api
+│   └── view
+├── dto
+│   ├── api
+│   │   ├── request
+│   │   └── response
+│   └── view
+├── domain
+│   └── entity
+├── repository
+└── service
+```
+
+<br>
+
 ## 팀 협업 방식
 
 ### 커밋 컨벤션
