@@ -39,8 +39,17 @@ public class LessonController {
     // 과외 생성
     @PostMapping("/create")
     public String create(@Valid @ModelAttribute LessonForm lessonForm) {
-        // TODO: 저장 로직 구현하기
+        // TODO: userId 가져오기
         // lessonService.saveLesson(lessonForm, 1L);
+
+        return "redirect:/lessons/create";
+    }
+
+    @PutMapping("/update/{lessonId}")
+    public String updateLesson(@PathVariable Long lessonId,
+                               @Valid @ModelAttribute LessonUpdateForm lessonUpdateForm){
+        // TODO: userId 가져오기
+        // lessonService.updateLesson(lessonUpdateForm, lessonId, 1L);
 
         return "redirect:/lessons/create";
     }
@@ -48,6 +57,7 @@ public class LessonController {
     // 과외 삭제
     @DeleteMapping("/{lessonId}")
     public String deleteLesson(@PathVariable Long lessonId){
+        // TODO: userId 가져오기
         //lessonService.deleteLesson(lessonId, 1L);
 
         return "redirect:/lessons";

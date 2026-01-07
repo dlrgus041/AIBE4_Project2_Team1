@@ -1,6 +1,8 @@
 package kr.java.pr1mary.repository;
 
 import kr.java.pr1mary.entity.lesson.Lesson;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,4 +14,7 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
     @Query("select l from Lesson l order by l.averageRating desc limit 10")
     List<Lesson> findPopularLessons();
+
+    @Query("select l from Lesson l where l.title like %:content% or l.user.name like %:content%")
+    Page<Lesson> findLessonsByContaining(String content, Pageable pageable);
 }
