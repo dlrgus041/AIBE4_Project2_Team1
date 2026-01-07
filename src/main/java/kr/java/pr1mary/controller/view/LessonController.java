@@ -2,6 +2,8 @@ package kr.java.pr1mary.controller.view;
 
 import jakarta.validation.Valid;
 import kr.java.pr1mary.dto.view.LessonForm;
+import kr.java.pr1mary.dto.view.LessonUpdateForm;
+import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -23,16 +25,39 @@ public class LessonController {
         return "pages/lesson/create-form";
     }
 
+    // 과외 수정 페이지
+    @GetMapping("/update/{lessonId}")
+    public String updateLesson(@PathVariable Long lessonId, Model model){
+        Lesson lesson = lessonService.getLesson(lessonId);
+
+        model.addAttribute("lessonId", lessonId);
+        model.addAttribute("lessonUpdateForm", new LessonUpdateForm(lesson));
+
+        return "pages/lesson/update-form";
+    }
+
+    // 과외 생성
     @PostMapping("/create")
     public String create(@Valid @ModelAttribute LessonForm lessonForm) {
-        // TODO: 저장 로직 구현하기
-        //lessonService.save(lessonForm, 1L);
+        // TODO: userId 가져오기
+        // lessonService.saveLesson(lessonForm, 1L);
 
         return "redirect:/lessons/create";
     }
 
+    @PutMapping("/update/{lessonId}")
+    public String updateLesson(@PathVariable Long lessonId,
+                               @Valid @ModelAttribute LessonUpdateForm lessonUpdateForm){
+        // TODO: userId 가져오기
+        // lessonService.updateLesson(lessonUpdateForm, lessonId, 1L);
+
+        return "redirect:/lessons/create";
+    }
+
+    // 과외 삭제
     @DeleteMapping("/{lessonId}")
     public String deleteLesson(@PathVariable Long lessonId){
+        // TODO: userId 가져오기
         //lessonService.deleteLesson(lessonId, 1L);
 
         return "redirect:/lessons";

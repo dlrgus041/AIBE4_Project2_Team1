@@ -2,6 +2,7 @@ package kr.java.pr1mary.entity.lesson;
 
 import jakarta.persistence.*;
 import kr.java.pr1mary.dto.view.LessonForm;
+import kr.java.pr1mary.dto.view.LessonUpdateForm;
 import kr.java.pr1mary.entity.BaseEntity;
 import kr.java.pr1mary.entity.user.User;
 import lombok.Getter;
@@ -51,5 +52,13 @@ public class Lesson extends BaseEntity {
         board.averageRating = 0.0;
 
         return board;
+    }
+
+    public void update(LessonUpdateForm lessonUpdateForm){
+        this.title = lessonUpdateForm.getTitle();
+        this.description = lessonUpdateForm.getDescription();
+        this.subjects = lessonUpdateForm.getSubjects();
+        this.mode = lessonUpdateForm.getMode();
+        this.price = lessonUpdateForm.getPrice();
     }
 }
