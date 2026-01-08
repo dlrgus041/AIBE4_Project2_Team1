@@ -19,7 +19,7 @@ import java.util.List;
 public class BookingController {
     private final BookingService bookingService;
 
-    // 👉 예약 생성 POST
+    // 👉 수업 예약 요청 POST
     // URL: POST /api/bookings
     // Body: { "studentId": 1, "scheduleId": 10, "requestMessage": "..." }
     // 응답 : 201 Created + ApiResponse
@@ -38,7 +38,7 @@ public class BookingController {
     }
 
      // 👉 수업 예약 취소
-     // URL: PATCH /api/bookings/{bookingId}/cancel?studentId=1
+     // URL: PATCH /api/bookings/9001/cancel?studentId=2001
     @PatchMapping("/{bookingId}/cancel")
     public ResponseEntity<ApiResponse<Void>> cancelBooking(
             @PathVariable Long bookingId,
@@ -51,7 +51,7 @@ public class BookingController {
     }
 
      // 👉내 예약 조회
-     // URL: GET /api/bookings/my?studentId=1
+     // URL: GET /api/bookings/my?studentId=2001
     @GetMapping("/my")
     public ResponseEntity<ApiResponse<List<BookingHistoryResponse>>> getMyBookings(
             @RequestParam Long studentId

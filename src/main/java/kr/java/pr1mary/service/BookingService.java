@@ -7,6 +7,7 @@ import kr.java.pr1mary.entity.lesson.Booking;
 import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.entity.lesson.Schedule;
 import kr.java.pr1mary.entity.user.User;
+import kr.java.pr1mary.exception.InvalidDateException;
 import kr.java.pr1mary.repository.BookingRepository;
 import kr.java.pr1mary.repository.LessonRepository;
 import kr.java.pr1mary.repository.ScheduleRepository;
@@ -33,8 +34,16 @@ public class BookingService {
     // Booking-History-01 [학생] 예약 현황 조회
     // Class History 탭과 Timetable 탭에서 공통으로 사용
     public List<BookingHistoryResponse> getMyBookings(Long studentId){
+        // 학생이 실제로 존재하는지 먼저 검증
+        if(!userRepository.existsById(studentId)){
+            throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+        }
         // Repository에서 Entity 조회
         List<Booking> bookings = bookingRepository.findAllByStudentIdOrderByScheduleStartTimeDesc(studentId);
+        // 예약 내역이 없으면 예외 발생
+        if(bookings.isEmpty()){
+            throw new IllegalArgumentException("예약 내역이 존재하지 않습니다.");
+        }
         // Entity -> DTO 변환
         return bookings.stream()
                 .map(BookingHistoryResponse::from)
@@ -70,8 +79,11 @@ public class BookingService {
         Schedule schedule = scheduleRepository.findById(request.scheduleId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스케줄입니다."));
 
-        Lesson lesson = schedule.getLesson();
+        // System-Logic-02 시간 유효성 검사
+        validateBookingTime(schedule);
 
+        // 수업 정보에 관한 정보
+        Lesson lesson = schedule.getLesson();
         if(lesson == null){
             throw new IllegalStateException("스케줄에 연결된 수업정보가 없습니다.");
         }
@@ -116,6 +128,17 @@ public class BookingService {
             throw new SecurityException("본인의 예약만 취소할 수 있습니다.");
         }
 
+        // 취소 가능 기간 검증 - 3일 전까지만 가능함
+        Schedule schedule = booking.getSchedule();
+        LocalDateTime classStartTime = schedule.getStartTime(); // 수업 시작 시간
+
+        // * 데드라인 계산 : 수업 시작 시간 - 3일
+        LocalDateTime cancelDeadLine = classStartTime.minusDays(3);
+
+        if(LocalDateTime.now().isAfter(cancelDeadLine)){
+            throw new IllegalStateException("수업 시작 3일 전까지만 취소할 수 있습니다.");
+        }
+
         // 상태 변경(취소)
         booking.setStatus("CANCELLED");
 
@@ -134,5 +157,21 @@ public class BookingService {
         return schedules.stream()
                 .map(ScheduleSlotResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    private void validateBookingTime(Schedule schedule){
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = schedule.getStartTime();
+        LocalDateTime endTime = schedule.getEndTime();
+
+        // 과거 날짜 검증
+        if(startTime.isBefore(now)){
+            throw new InvalidDateException("이미 지난 시간의 수업은 신청할 수 없습니다.");
+        }
+
+        // 시간 역전/오류 검증
+        if(endTime.isBefore(startTime)||endTime.equals(startTime)){
+            throw new InvalidDateException("잘못된 수업 시간입니다. (종료 시간이 시작 시간보다 빠르거나 같음)");
+        }
     }
 }
