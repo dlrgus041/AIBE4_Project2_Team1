@@ -1,4 +1,4 @@
-package kr.java.pr1mary.dto.view;
+package kr.java.pr1mary.dto.api.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -6,12 +6,16 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.entity.lesson.Subjects;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class LessonUpdateForm {
+@NoArgsConstructor
+@AllArgsConstructor
+public class LessonUpdateRequest {
     @NotNull
     private Long id;
 
@@ -31,13 +35,4 @@ public class LessonUpdateForm {
     @NotNull(message = "가격을 입력해주세요.")
     @Min(value = 1000)
     private Long price;
-
-    public LessonUpdateForm(Lesson lesson) {
-        this.id = lesson.getId();
-        this.title = lesson.getTitle();
-        this.description = lesson.getDescription();
-        this.subjects = lesson.getSubjects();
-        this.mode = lesson.getMode();
-        this.price = lesson.getPrice();
-    }
 }

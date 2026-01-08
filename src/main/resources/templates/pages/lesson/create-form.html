@@ -88,13 +88,11 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <button>←</button>
-        새 과외 등록하기
-    </div>
-
-    <form th:action="@{/lessons/create}" th:object="${lessonForm}" method="post">
+    <div class="container">
+        <div class="header">
+            <button>←</button>
+            새 과외 등록하기
+        </div>
 
         <!-- 기본 정보 -->
         <div class="card">
@@ -103,7 +101,7 @@
             <div class="form-group">
                 <label>수업 제목</label>
                 <input class="width-item" type="text"
-                       th:field="*{title}"
+                       id="lessonTitle"
                        maxlength="50"
                        placeholder="수업 제목을 입력해주세요 (최대 50자)">
             </div>
@@ -111,7 +109,7 @@
             <div class="form-group">
                 <label>과목 선택</label>
                 <label>
-                    <select class="width-item" th:field="*{subjects}">
+                    <select class="width-item" id="lessonSubjects">
                         <option value="" disabled selected>
                             카테고리를 선택해주세요 (ex. 수학, 영어)
                         </option>
@@ -132,12 +130,12 @@
                 <label>수업 방식</label>
                 <div class="mode-group">
                     <label class="radio-item">
-                        <input type="radio" name="mode" th:field="*{mode}" value="ONLINE" checked>
+                        <input type="radio" name="lessonMode" value="ONLINE" checked>
                         <span>온라인 (Zoom 등)</span>
                     </label>
 
                     <label class="radio-item">
-                        <input type="radio" name="mode" th:field="*{mode}" value="OFFLINE">
+                        <input type="radio" name="lessonMode" value="OFFLINE">
                         <span>오프라인 (대면)</span>
                     </label>
                 </div>
@@ -146,8 +144,7 @@
             <div class="form-group">
                 <label>시간당 가격</label>
                 <label>
-                    <input class="width-item" type="number" min="1000"
-                           th:field="*{price}"
+                    <input class="width-item" type="number" min="1000" id="lessonPrice"
                            placeholder="가격을 입력해주세요 (최소 1000원)" required>
                 </label>
             </div>
@@ -159,13 +156,43 @@
 
             <div class="form-group">
                 <label>상세 설명</label>
-                <textarea class="width-item" th:field="*{description}" maxlength="2000" placeholder="설명부터 수업 방식까지 자세히 적어주세요. 커리큘럼이나 수업 목표를 적으면 학생들의 신청률이 올라갑니다!"></textarea>
+                <textarea id="lessonDescription" class="width-item" maxlength="2000" placeholder="설명부터 수업 방식까지 자세히 적어주세요. 커리큘럼이나 수업 목표를 적으면 학생들의 신청률이 올라갑니다!"></textarea>
             </div>
         </div>
 
-        <button type="submit" class="submit-btn">수업 등록 완료</button>
-    </form>
-</div>
+        <button onclick="createLesson()" class="submit-btn">수업 등록 완료</button>
+    </div>
 
+    <script>
+        async function apiCall(url, options = {}) {
+            try {
+                const res = await fetch(url, {
+                    ...options,
+                    credentials: 'same-origin', // fetch -> cookie를 읽어서 같이 전달해줌
+                    headers: { 'Content-Type': 'application/json', ...options.headers }
+                });
+                const data = await res.json().catch(() => ({}));
+                return { ok: res.ok, data };
+            } catch (e) {
+                return { ok: false, data: {} };
+            }
+        }
+
+        async function createLesson() {
+            const result = await apiCall('/api/lessons', {
+                method: 'POST',
+                body: JSON.stringify({
+                    title: document.getElementById('lessonTitle').value,
+                    description: document.getElementById('lessonDescription').value,
+                    subjects: document.getElementById('lessonSubjects').value,
+                    mode: document.querySelector('input[name="lessonMode"]:checked').value,
+                    price: document.getElementById('lessonPrice').value
+                })
+            });
+            if (result.ok) {
+                window.location.href='/'
+            }
+        }
+    </script>
 </body>
 </html>

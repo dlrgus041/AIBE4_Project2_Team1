@@ -1,17 +1,19 @@
 package kr.java.pr1mary;
 
+import kr.java.pr1mary.dto.api.request.LessonRequest;
 import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.entity.lesson.Subjects;
+import kr.java.pr1mary.entity.user.TeacherProfile;
 import kr.java.pr1mary.entity.user.User;
-import kr.java.pr1mary.repository.LessonRepository;
+import kr.java.pr1mary.repository.TeacherProfileRepository;
 import kr.java.pr1mary.repository.UserRepository;
+import kr.java.pr1mary.search.service.SearchService;
+import kr.java.pr1mary.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -19,7 +21,9 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
-    private final LessonRepository lessonRepository;
+    private final LessonService lessonService;
+    private final TeacherProfileRepository teacherProfileRepository;
+    private final SearchService searchService;
 
     @Override
     @Transactional
@@ -30,6 +34,8 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         log.info("테스트 데이터 초기화...");
+
+        searchService.reset();
 
         User teacher = new User();
         teacher.setEmail("teacher@naver.com");
@@ -45,18 +51,34 @@ public class DataInitializer implements CommandLineRunner {
         student.setAuth(User.Auth.LOCAL);
         student.setRole(User.Role.STUDENT);
 
-        userRepository.saveAll(List.of(teacher, student));
+        User t = userRepository.save(teacher);
+        userRepository.save(student);
 
-        Lesson lesson = new Lesson();
-        lesson.setUser(teacher);
-        lesson.setTitle("lesson1");
-        lesson.setDescription("lesson1");
-        lesson.setPrice(10000L);
-        lesson.setAverageRating(5.0);
-        lesson.setMode(Lesson.Mode.OFFLINE);
-        lesson.setSubjects(Subjects.ENGLISH);
+        TeacherProfile teacherProfile = new TeacherProfile();
+        teacherProfile.setUser(t);
+        teacherProfile.setBio("hello");
+        teacherProfile.setRegionCode("312");
+        teacherProfile.setSchoolLevel(TeacherProfile.Level.HIGH);
 
-        lessonRepository.save(lesson);
+        teacherProfileRepository.save(teacherProfile);
+
+        LessonRequest lessonRequest = new LessonRequest();
+        lessonRequest.setTitle("test1");
+        lessonRequest.setDescription("test1");
+        lessonRequest.setSubjects(Subjects.MATH);
+        lessonRequest.setMode(Lesson.Mode.ONLINE);
+        lessonRequest.setPrice(1000L);
+
+        lessonService.saveLesson(lessonRequest, t.getId());
+
+        LessonRequest lessonRequest2 = new LessonRequest();
+        lessonRequest2.setTitle("test2");
+        lessonRequest2.setDescription("test2");
+        lessonRequest2.setSubjects(Subjects.ENGLISH);
+        lessonRequest2.setMode(Lesson.Mode.OFFLINE);
+        lessonRequest2.setPrice(1000L);
+
+        lessonService.saveLesson(lessonRequest2, t.getId());
 
         log.info("초기화 완료!");
     }
