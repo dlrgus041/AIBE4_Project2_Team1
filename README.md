@@ -9,8 +9,7 @@ kr.java.pr1mary
 │   │   ├── request
 │   │   └── response
 │   └── view
-├── domain
-│   └── entity
+├── entity
 ├── repository
 └── service
 ```
