@@ -3,12 +3,17 @@ package kr.java.pr1mary.service;
 import jakarta.persistence.EntityNotFoundException;
 import kr.java.pr1mary.dto.api.response.LessonDetailResponse;
 import kr.java.pr1mary.dto.api.response.LessonResponse;
-import kr.java.pr1mary.dto.view.LessonForm;
+import kr.java.pr1mary.dto.api.request.LessonRequest;
+import kr.java.pr1mary.dto.api.request.LessonUpdateRequest;
 import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.entity.user.User;
 import kr.java.pr1mary.repository.LessonRepository;
+import kr.java.pr1mary.repository.TeacherProfileRepository;
 import kr.java.pr1mary.repository.UserRepository;
+import kr.java.pr1mary.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,23 +27,61 @@ import java.util.stream.Collectors;
 public class LessonService {
     private final LessonRepository lessonRepository;
     private final UserRepository userRepository;
+    private final TeacherProfileRepository teacherProfileRepository;
+    private final SearchService searchService;
 
+    public Lesson getLesson(Long lessonId){
+        return lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new EntityNotFoundException("과외를 찾을 수 없습니다."));
+    }
+
+    // 과외 저장
     @Transactional
-    public void save(LessonForm form, Long userId){
+    public LessonResponse saveLesson(LessonRequest request, Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-        
-        // TODO: 유저가 선생님인지 확인
 
-        Lesson lesson = Lesson.create(form, user);
+        if(!teacherProfileRepository.existsTeacherProfileByUser_Id(userId)){
+            throw new IllegalArgumentException("선생님이 아닙니다.");
+        }
+
+        Lesson lesson = Lesson.create(request, user);
         Lesson saved = lessonRepository.save(lesson);
 
-        LessonResponse.from(saved);
+        // elasticsearch document 저장
+        searchService.saveDocument(saved);
+
+        return LessonResponse.from(saved);
+    }
+
+    // 과외 정보 수정
+    @Transactional
+    public LessonResponse updateLesson(LessonUpdateRequest request, Long userId){
+        Lesson lesson = lessonRepository.findById(request.getId())
+                .orElseThrow(() -> new EntityNotFoundException("과외를 찾을 수 없습니다."));
+
+        if(!Objects.equals(lesson.getUser().getId(), userId)){
+            throw new IllegalArgumentException("수정 권한이 없습니다.");
+        }
+        lesson.update(request);
+
+        // elasticsearch document 저장
+        searchService.updateDocument(lesson);
+
+        return LessonResponse.from(lesson);
+    }
+
+    public Page<LessonResponse> getSearchLessons(String content, Pageable pageable){
+        return lessonRepository.findLessonsByContaining(content, pageable).map(LessonResponse::from);
     }
     
-    // TODO: 인기 과외 목록 조회
+    // 인기 과외 목록 조회
+    public List<LessonResponse> getPopularLessons(){
+        return lessonRepository.findPopularLessons().stream()
+                .map(LessonResponse::from).collect(Collectors.toList());
+    }
 
-    // 과외 상세
+    // 과외 상세 조회
     public LessonDetailResponse getLessonDetail(Long lessonId){
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new EntityNotFoundException("과외를 찾을 수 없습니다."));
@@ -58,12 +101,11 @@ public class LessonService {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new EntityNotFoundException("리뷰를 찾을 수 없습니다."));
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
-        if(!Objects.equals(lesson.getUser().getId(), user.getId())){
+        if(!Objects.equals(lesson.getUser().getId(), userId)){
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
+        // elasticsearch document 삭제
+        searchService.deleteDocument(lesson.getId());
 
         lessonRepository.delete(lesson);
     }

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>과외 검색</title>
+</head>
+<body>
+  <h2>과외 검색</h2>
+
+  <form th:action="@{/search}" method="get">
+    <input type="text"
+           name="keyword"
+           placeholder="과외명 또는 선생님 이름"
+           th:value="${keyword}">
+    <button type="submit">검색</button>
+  </form>
+
+  <hr>
+
+  <div th:if="${results != null}">
+    <h3>검색 결과</h3>
+
+    <ul>
+      <li th:each="lesson : ${results}">
+        <b th:text="${lesson.lessonName}"></b>
+        -
+        <span th:text="${lesson.teacherName}"></span>
+      </li>
+    </ul>
+
+    <div th:if="${#lists.isEmpty(results)}">
+      검색 결과가 없습니다.
+    </div>
+  </div>
+
+</body>
+</html>

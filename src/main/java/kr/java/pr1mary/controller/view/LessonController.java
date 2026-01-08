@@ -1,7 +1,6 @@
 package kr.java.pr1mary.controller.view;
 
-import jakarta.validation.Valid;
-import kr.java.pr1mary.dto.view.LessonForm;
+import kr.java.pr1mary.entity.lesson.Lesson;
 import kr.java.pr1mary.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,18 +16,17 @@ public class LessonController {
 
     // 과외 생성 페이지
     @GetMapping("/create")
-    public String createForm(Model model){
-        model.addAttribute("lessonForm", new LessonForm());
-
+    public String createForm(){
         return "pages/lesson/create-form";
     }
 
-    @PostMapping("/create")
-    public String create(@Valid @ModelAttribute LessonForm lessonForm) {
-        // TODO: 저장 로직 구현하기
-        //lessonService.save(lessonForm, 1L);
+    // 과외 수정 페이지
+    @GetMapping("/update/{lessonId}")
+    public String updateLesson(@PathVariable Long lessonId, Model model){
+        Lesson lesson = lessonService.getLesson(lessonId);
 
-        return "redirect:/lessons/create";
+        model.addAttribute("lesson", lesson);
+
+        return "pages/lesson/update-form";
     }
-
 }
