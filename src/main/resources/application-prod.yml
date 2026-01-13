@@ -9,6 +9,11 @@ spring:
     hibernate:
       ddl-auto: validate
 
+  elasticsearch:
+    username: ${ELASTIC_USERNAME}
+    password: ${ELASTIC_PASSWORD}
+    uris: ${ELASTIC_URI}
+
   thymeleaf:
     cache: true
 

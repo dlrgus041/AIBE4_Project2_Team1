@@ -64,7 +64,7 @@ header {
 }
 
 /* --- 배너 및 푸터 --- */
-.footer-info { padding: 40px 0; text-align: center; border-top: 1px solid var(--divider); margin-top: 40px; color: var(--secondary-text); }
+.footer-info { padding: 40px 0; text-align: center; border-top: 1px solid var(--divider); margin-top: 40px; color: var(--text-secondary); }
 .footer-links span { margin: 0 8px; cursor: pointer; font-size: 0.85rem; }
 .footer-links span:hover { text-decoration: underline; }
 .copyright { font-size: 0.8rem; margin-top: 12px; color: #999; }
