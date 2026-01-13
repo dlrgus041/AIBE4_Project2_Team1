@@ -79,13 +79,18 @@ public class TeacherProfileService {
 
     // 리뷰 평점 가져오기
     public Double getAverageRating(Long teacherId) {
-        List<Review> reviews = reviewRepository.findByTeacherId(teacherId);
+        List<Review> reviews = getReviews(teacherId);
         double sum = 0.0, count = 0.0;
         for (Review review : reviews) {
             sum += review.getRating();
             count++;
         }
         return count == 0.0 ? 0.0 : sum / count;
+    }
+
+    // 리뷰 가져오기
+    public List<Review> getReviews(Long teacherId) {
+        return reviewRepository.findByTeacherId(teacherId);
     }
 
     // 모든 수업 조회

@@ -84,7 +84,7 @@
 <div class="container">
     <div class="content-wrapper">
         <aside class="profile-card">
-            <div class="profile-img-circle"></div>
+            <img th:src="@{'/studentImage/' + profile.imageUrl}" class="profile-img-circle" alt="프로필">
             <div class="profile-info">
                 <h2 th:text="${profile.user.name}">김학생</h2>
                 <p th:text="${profile.user.email}">student@email.com</p>

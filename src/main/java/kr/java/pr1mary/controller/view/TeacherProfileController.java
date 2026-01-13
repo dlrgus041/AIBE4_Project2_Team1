@@ -36,7 +36,16 @@ public class TeacherProfileController {
     // 프로필 공개 페이지
     @GetMapping("/public")
     public String teacherPublicProfilePage(@RequestParam("id") Long id, Model model) {
+        List<Lesson> lessons = profileService.getAllLessons(id);
+        long profit = 0L;
+        for (Lesson lesson: lessons) profit += lesson.getPrice();
+
         model.addAttribute("profile", profileService.getProfileByTeacherId(id));
+        model.addAttribute("bookings", profileService.getAllBookings(id));
+        model.addAttribute("reviews", profileService.getReviews(id));
+        model.addAttribute("lessons", lessons);
+        model.addAttribute("profit", profit);
+        model.addAttribute("average", profileService.getAverageRating(id));
         return "pages/profiles/teacher-profile-public";
     }
 

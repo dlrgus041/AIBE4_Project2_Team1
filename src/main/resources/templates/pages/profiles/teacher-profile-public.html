@@ -1,177 +1,138 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>선생님 프로필</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        /* 커스텀 스타일: 와이어프레임 느낌을 살리기 위한 CSS */
-        body {
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        .container-main {
-            max-width: 600px; /* 모바일 앱 뷰처럼 폭 제한 */
-            margin: 0 auto;
-            background-color: #fff;
-            min-height: 100vh;
-            border-left: 1px solid #ddd;
-            border-right: 1px solid #ddd;
-        }
-        .header {
-            border-bottom: 2px solid #333;
-            padding: 15px;
-        }
-        .profile-img {
-            width: 100px;
-            height: 100px;
-            background-color: #d9d9d9;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .btn-custom-sm {
-            font-size: 0.8rem;
-            padding: 4px 10px;
-            border-radius: 20px;
-            background-color: #e9ecef;
-            border: none;
-            color: #333;
-        }
-        .section-icon {
-            margin-right: 8px;
-            color: #6c757d;
-        }
-        .course-item {
-            background-color: #e9ecef;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            padding: 10px;
-        }
-        .course-badge {
-            background-color: #ced4da;
-            color: #333;
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 5px;
-            margin-right: 8px;
-            font-size: 0.9rem;
-        }
-        .review-scroll-container {
-            display: flex;
-            overflow-x: auto;
-            gap: 15px;
-            padding-bottom: 10px;
-        }
-        .review-card {
-            min-width: 200px;
-            border: 1px solid #ced4da;
-            border-radius: 15px;
-            padding: 15px;
-            background: #fff;
-        }
-        /* 스크롤바 숨기기 (선택사항) */
-        .review-scroll-container::-webkit-scrollbar {
-            height: 6px;
-        }
-        .review-scroll-container::-webkit-scrollbar-thumb {
-            background-color: #ccc;
-            border-radius: 10px;
-        }
+        /* --- 기존 CSS 스타일 그대로 유지 --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background-color: #f5f5f5; display: flex; justify-content: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 480px; background-color: #fff; border: 1px solid #ddd; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* 헤더 */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 2px solid #333; }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .menu-icon { font-size: 24px; cursor: pointer; }
+        .logo { font-size: 18px; font-weight: bold; }
+        .header-right { display: flex; gap: 15px; font-size: 20px; }
+
+        /* 메인 */
+        main { padding: 20px; display: flex; flex-direction: column; gap: 30px; }
+
+        /* 프로필 */
+        .profile-section { display: flex; gap: 20px; align-items: flex-start; }
+        .avatar { width: 100px; height: 100px; background-color: #d9d9d9; border-radius: 50%; flex-shrink: 0; background-size: cover; background-position: center; }
+        .profile-info { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+        .name-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .name-row h1 { font-size: 20px; font-weight: bold; }
+        .action-buttons { display: flex; gap: 5px; }
+        .btn-pill { background-color: #e0e0e0; padding: 4px 10px; border-radius: 15px; font-size: 12px; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: bold; color: #333; }
+        .intro-text { font-size: 14px; color: #333; }
+        .meta-info { font-size: 13px; color: #555; display: flex; flex-direction: column; gap: 4px; }
+
+        /* 공통 섹션 */
+        .section-row { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 500; }
+        .icon-placeholder { font-size: 18px; }
+
+        /* 수업 리스트 */
+        .class-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .class-item { display: flex; gap: 8px; align-items: center; }
+        .badge { background-color: #e0e0e0; padding: 6px 12px; border-radius: 8px; font-size: 14px; font-weight: bold; white-space: nowrap; }
+        .class-title { background-color: #e0e0e0; padding: 6px 12px; border-radius: 8px; font-size: 14px; flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .apply-btn { background-color: #d0d0d0; padding: 6px 12px; border-radius: 8px; font-size: 14px; border: none; font-weight: bold; cursor: pointer; }
+
+        /* 후기 (가로 스크롤) */
+        .review-section { margin-top: 10px; }
+        .review-scroll-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-top: 15px; }
+        .review-scroll-container::-webkit-scrollbar { height: 6px; }
+        .review-scroll-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+        .review-card { min-width: 140px; height: 140px; border: 1px solid #aaa; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #fff; flex-shrink: 0; }
+        .review-subject { font-size: 14px; font-weight: bold; }
+        .review-content { font-size: 14px; color: #333; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="container-main">
-
-    <div class="header d-flex justify-content-between align-items-center bg-white sticky-top">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-bars fa-lg me-3"></i> <span class="fw-bold fs-5">로고</span>
+<div class="app-container">
+    <header>
+        <div class="header-left">
+            <div class="menu-icon">≡</div>
+            <div class="logo">로고</div>
         </div>
-        <div>
-            <i class="far fa-bell fa-lg me-3"></i> <i class="far fa-comment fa-lg"></i>    </div>
-    </div>
+        <div class="header-right">
+            <span>🔔</span>
+            <span>💬</span>
+        </div>
+    </header>
 
-    <div class="p-4">
-        <div class="d-flex align-items-start mb-4">
-            <div class="me-4">
-                <img th:src="${teacher.profileImageUrl != null ? teacher.profileImageUrl : 'https://dummyimage.com/100x100/d9d9d9/fff'}"
-                     class="profile-img" alt="프로필 이미지">
-            </div>
-
-            <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <h4 class="mb-0 fw-bold" th:text="${teacher.name}">이선생 선생님</h4>
-                    <div>
-                        <button class="btn-custom-sm me-1"><i class="fas fa-heart me-1"></i>찜</button>
-                        <button class="btn-custom-sm"><i class="fas fa-paper-plane me-1"></i>문의</button>
+    <main>
+        <section class="profile-section">
+            <img class="avatar" th:src="@{'/teacherImage/' + profile.imgeUrl}">
+            <div class="profile-info">
+                <div class="name-row">
+                    <h1 th:text="${profile.user.name}">이선생 선생님</h1>
+                    <div class="action-buttons">
+                        <button class="btn-pill">♥ 찜</button>
+                        <button class="btn-pill">✈ 문의</button>
                     </div>
                 </div>
-                <p class="text-muted mb-2 small" th:text="${teacher.shortBio}">한줄 소개</p>
-
-                <div class="small text-secondary">
-                    <span class="text-warning"><i class="fas fa-star"></i> <span th:text="${teacher.rating}">4.8</span></span>
-                    <span class="mx-1">|</span>
-                    <span>후기 <span th:text="${teacher.reviewCount}">52</span>개</span>
-                    <span class="mx-1">|</span>
-                    <span><i class="fas fa-map-marker-alt text-danger"></i> <span th:text="${teacher.location}">서울시 강남구</span></span>
-                </div>
-                <div class="small text-secondary mt-1">
-                    <i class="far fa-envelope me-1"></i> <span th:text="${teacher.email}">teacher@email.com</span>
+                <div class="intro-text" th:text="${profile.bio}">한줄 소개</div>
+                <div class="meta-info">
+                    <div class="rating" th:text="${average}, 후기 ${reviews.size()}개, ${profile.regionCode}">
+                        4.8, 후기 52개, 서울시 강남구
+                    </div>
+                    <div class="email" th:text="${profile.user.email}">teacher@email.com</div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <hr class="my-4">
+        <section>
+            <div class="section-row">
+                <span class="icon-placeholder">📢</span>
+                <span>선생님 소개</span>
+            </div>
+        </section>
 
-        <div class="mb-4">
-            <h6 class="fw-bold mb-2"><i class="fas fa-bullhorn section-icon"></i>선생님 소개</h6>
-            <p class="text-muted small ps-4" th:text="${teacher.introduction}">
-                선생님 상세 소개 내용이 들어갑니다. (타임리프 변수 연동)
-            </p>
-        </div>
+        <section>
+            <div class="section-row">
+                <span class="icon-placeholder">🎓</span>
+                <span>학력 및 경력</span>
+            </div>
+        </section>
 
-        <div class="mb-4">
-            <h6 class="fw-bold mb-2"><i class="fas fa-graduation-cap section-icon"></i>학력 및 경력</h6>
-            <ul class="text-muted small ps-4 list-unstyled">
-                <li th:each="career : ${teacher.careers}" th:text="${'- ' + career}">- 서울대학교 졸업</li>
-                <li th:if="${teacher.careers == null}">- 학력 및 경력 정보 없음</li>
-            </ul>
-        </div>
-
-        <div class="mb-4">
-            <h6 class="fw-bold mb-3"><i class="fas fa-book-open section-icon"></i>개설된 수업</h6>
-
-            <div th:each="course : ${courses}" class="d-flex align-items-center justify-content-between course-item">
-                <div class="d-flex align-items-center text-truncate">
-                    <span class="course-badge" th:text="${course.subject}">영어</span>
-                    <span class="text-truncate small fw-bold" th:text="${course.title}">세상과 소통하는 즐거움</span>
+        <section>
+            <div class="section-row">
+                <span class="icon-placeholder">📖</span>
+                <span>개설된 수업</span>
+            </div>
+            <div class="class-list">
+                <div class="class-item" th:each="l : ${lessons}">
+                    <div class="badge" th:text="${l.subjects}">과목</div>
+                    <div class="class-title" th:text="${l.title}">수업 제목이 들어갑니다</div>
+                    <button class="apply-btn">신청</button>
                 </div>
-                <button class="btn btn-secondary btn-sm ms-2" style="font-size: 0.8rem; border-radius: 10px;">신청</button>
             </div>
+        </section>
 
-            <div th:if="${#lists.isEmpty(courses)}" class="course-item">
-                <span class="small text-muted">등록된 수업이 없습니다.</span>
+        <section class="review-section">
+            <div class="section-row">
+                <span class="icon-placeholder">💬</span>
+                <span>수강생 후기</span>
             </div>
-        </div>
-
-        <div>
-            <h6 class="fw-bold mb-3"><i class="far fa-comments section-icon"></i>수강생 후기</h6>
-
             <div class="review-scroll-container">
-                <div th:each="review : ${reviews}" class="review-card">
-                    <div class="fw-bold small mb-2" th:text="${review.courseName}">수업 과목</div>
-                    <p class="text-muted small mb-0" th:text="${'&quot;' + review.content + '&quot;'}">"후기 내용"</p>
+                <div class="review-card" th:each="r : ${reviews}">
+                    <div class="review-subject" th:text="${r.lesson.subjects}">수업 과목</div>
+                    <div class="review-content" th:text="${r.comment}">"후기 내용"</div>
                 </div>
 
-                <div th:if="${#lists.isEmpty(reviews)}" class="review-card">
-                    <p class="text-muted small mb-0">등록된 후기가 없습니다.</p>
+                <div class="review-card" th:if="${reviews.isEmpty()}" style="justify-content: center; align-items: center;">
+                    <div class="review-content">등록된 후기가<br>없습니다.</div>
                 </div>
             </div>
-        </div>
+        </section>
+    </main>
+</div>
 
-    </div> </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
