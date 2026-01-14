@@ -1,6 +1,7 @@
 package websocket.config;
 
 import jakarta.servlet.DispatcherType;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import websocket.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +35,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
-                        .requestMatchers("/", "/login/**", "/css/**", "/js/**", "/api/login", "/api/signup", "/api/logintest", "./images/**").permitAll()
+                        .requestMatchers("/", "/login/**", "/css/**", "/js/**", "/api/login", "/api/signup", "/api/logintest", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
@@ -110,6 +111,12 @@ public class SecurityConfig {
             String encodedMessage = URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
             response.sendRedirect("/api/login?error=true&message=" + encodedMessage);
         };
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .requestMatchers("/images/**", "/css/**", "/js/**", "/favicon.ico");
     }
 
     @Bean
