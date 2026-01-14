@@ -1,5 +1,6 @@
 package websocket.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import websocket.dto.view.ReviewDTO;
 import websocket.entity.user.Review;
 import websocket.repository.BookingRepository;
@@ -14,6 +15,7 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
@@ -21,6 +23,7 @@ public class ReviewService {
     private final BookingRepository bookingRepository;
 
     // 리뷰 저장
+    @Transactional
     public void saveReview(ReviewDTO dto) {
         Review review = new Review();
         review.setUser(userRepository.findById(dto.getUserId())
