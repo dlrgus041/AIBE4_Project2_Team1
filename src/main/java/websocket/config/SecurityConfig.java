@@ -1,5 +1,7 @@
 package websocket.config;
 
+import jakarta.servlet.DispatcherType;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import websocket.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +67,7 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint())
+                        .accessDeniedHandler(accessDeniedHandler())
                 );
 
         return http.build();
@@ -108,6 +111,12 @@ public class SecurityConfig {
             String encodedMessage = URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
             response.sendRedirect("/api/login?error=true&message=" + encodedMessage);
         };
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .requestMatchers("/images/**", "/css/**", "/js/**", "/favicon.ico");
     }
 
     @Bean
