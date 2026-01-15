@@ -74,7 +74,7 @@ public class BookingService {
     // System-Logic-01 중복 예약 방지 로직
     // Transactional(readOnly = false) 필요 - 데이터 저장, 수정 발생
     @Transactional
-    public Long registerBooking(Long studentId, BookingCreateRequest request){
+    public Booking registerBooking(Long studentId, BookingCreateRequest request){
         // 학생 조회
         User student = userRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 학생입니다."));
@@ -113,11 +113,11 @@ public class BookingService {
         booking.setStatus(BookingStatus.PENDING);
         booking.setRequestMessage(request.requestMessage());
 
-        bookingRepository.save(booking);
+        Booking savedBooking = bookingRepository.save(booking);
 
         // 스케줄 상태 변경(예약됨 처리) -> Dirty Checking
         schedule.setIsBooked(true);
-        return booking.getId();
+        return savedBooking;
     }
 
     // Class-Booking-03 수업 예약 취소
