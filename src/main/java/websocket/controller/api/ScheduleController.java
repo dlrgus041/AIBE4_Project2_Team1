@@ -1,5 +1,6 @@
 package websocket.controller.api;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import websocket.dto.api.request.ScheduleRequest;
 import websocket.dto.api.response.ApiResponse;
@@ -31,7 +32,7 @@ public class ScheduleController {
                                                            @RequestParam Long teacherId){
         ScheduleResponse response = scheduleService.createSchedule(request, teacherId);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/availability")

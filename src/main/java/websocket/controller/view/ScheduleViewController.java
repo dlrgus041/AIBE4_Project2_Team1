@@ -1,6 +1,8 @@
 package websocket.controller.view;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import websocket.dto.api.response.TeacherScheduleResponse;
+import websocket.entity.CustomUserDetails;
 import websocket.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -19,10 +21,8 @@ public class ScheduleViewController {
 
     // 선생님 페이지 - 시간표 관리 화면
     @GetMapping("/timetable")
-    public String teacherTimetable(Model model) {
-        // TODO : 로그인 기능 구현 후 @AuthenticationPrincipal 로 ID를 받아와야 함
-        // 테스트 용으로 101L 사용
-        Long currentTeacherId = 101L;
+    public String teacherTimetable(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long currentTeacherId = userDetails.getId();
 
         List<TeacherScheduleResponse> schedules = scheduleService.getTeacherSchedules(currentTeacherId);
 

@@ -107,6 +107,7 @@ public class ScheduleService {
     }
 
     // 일정 생성
+    @Transactional
     public ScheduleResponse createSchedule(ScheduleRequest request, Long teacherId) {
         User user = userRepository.findById(teacherId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
