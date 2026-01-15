@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>강의 상세 - StudyLink</title>
+    <title>강의 상세</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
 
     <style>
         /* --- [레이아웃] --- */
@@ -42,6 +42,21 @@
         }
         .teacher-name { font-weight: 700; font-size: 1.05rem; }
 
+        .rating-box{
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            color: #FFC107;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .rating-number{
+            color: #333;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
         .section-header { font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
         .text-body { line-height: 1.7; color: #444; white-space: pre-line; }
 
@@ -72,6 +87,23 @@
         .info-label { color: var(--text-secondary); }
         .info-value { font-weight: 500; color: var(--text-primary); }
 
+        .schedule-select{
+            width: 100%;
+            padding: 12px;
+            margin-top: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #fff;
+        }
+
+        .schedule-select {
+            width: 100%; padding: 12px; margin-top: 15px;
+            border: 1px solid #ddd; border-radius: 6px;
+            font-size: 1rem;
+        }
+
         .btn-apply {
             display: block; width: 100%; padding: 16px; margin-top: 24px;
             background-color: var(--primary); color: white;
@@ -80,6 +112,10 @@
             transition: background-color 0.2s;
         }
         .btn-apply:hover { background-color: var(--primary-dark); }
+        .btn-apply:disabled{
+            background-color: #ccc;
+            cursor : not-allowed;
+        }
 
         .btn-cart {
             display: block; width: 100%; padding: 14px; margin-top: 12px;
