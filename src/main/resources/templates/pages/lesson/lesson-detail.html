@@ -104,12 +104,10 @@
     </div>
 
     <div class="detail-container">
-
         <section class="main-content">
-
             <div class="lesson-header-section">
-                <span class="badge-subject" th:text="${lesson.subjects}">MATH</span>
-                <h1 class="detail-title" th:text="${lesson.title}">고등 수학 완전 정복</h1>
+                <span class="badge-subject" th:text="${lesson.subjects}"></span>
+                <h1 class="detail-title" th:text="${lesson.title}"></h1>
 
                 <div class="teacher-profile">
                     <div class="teacher-avatar">
@@ -126,7 +124,6 @@
             <article>
                 <h3 class="section-header">수업 소개</h3>
                 <div class="text-body" th:text="${lesson.description}">
-                    이 수업은 기초가 부족한 학생들을 위해... (상세 내용)
                 </div>
             </article>
         </section>
@@ -134,16 +131,16 @@
         <aside class="sidebar">
             <div class="booking-card">
                 <div class="price-section">
-                    <span class="price-value" th:text="${#numbers.formatInteger(lesson.price, 0, 'COMMA')}">50,000</span>
+                    <span class="price-value" th:text="${#numbers.formatInteger(lesson.price, 0, 'COMMA')}"></span>
                     <span class="price-value">원</span>
-                    <span class="price-unit">/ 시간 단위</span>
+                    <span class="price-unit">/ 시간</span>
                 </div>
 
                 <div style="border-top: 1px solid #f0f0f0; margin: 16px 0;"></div>
 
                 <div class="info-row">
                     <span class="info-label">수업 방식</span>
-                    <span class="info-value" th:text="${lesson.mode == 'ONLINE' ? '온라인 화상' : '오프라인 대면'}">온라인</span>
+                    <span class="info-value" th:text="${lesson.mode == 'ONLINE' ? '온라인 화상' : '오프라인 대면'}"></span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">총 소요 시간</span>

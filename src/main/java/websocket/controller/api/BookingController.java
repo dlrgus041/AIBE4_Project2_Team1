@@ -8,6 +8,7 @@ import websocket.dto.api.response.ApiResponse;
 import websocket.dto.api.response.BookingCreateResponse;
 import websocket.dto.api.response.BookingHistoryResponse;
 import websocket.entity.CustomUserDetails;
+import websocket.entity.lesson.Booking;
 import websocket.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,8 +36,8 @@ public class BookingController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody @Valid BookingCreateRequest request
     ){
-        Long bookingId = bookingService.registerBooking(userDetails.getId(), request);
-        BookingCreateResponse data = BookingCreateResponse.of(bookingId, "PENDING");
+        Booking savedBooking = bookingService.registerBooking(userDetails.getId(), request);
+        BookingCreateResponse data = BookingCreateResponse.of(savedBooking);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
